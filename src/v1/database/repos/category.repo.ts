@@ -17,4 +17,20 @@ export class CategoryRepo {
   async findMany (args: Prisma.CategoryFindManyArgs) {
     return this.prisma.category.findMany(args);
   }
+
+  async findById (id: string) {
+    return this.prisma.category.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async deleteById (id: string) {
+    return this.prisma.category.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }

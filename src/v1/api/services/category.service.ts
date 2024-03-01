@@ -15,4 +15,8 @@ export class CategoryService {
   async getAll () {
     return this.categoryRepo.findMany({});
   }
+
+  async delete (id: string) {
+    return this.categoryRepo.deleteById(id);
+  }
 }

@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CategoryService } from '../services/category.service';
 import { CategoryDto } from '../dto/category.dto';
+import { CategoryByIdPipe } from '../../pipes/category-by-id.pipe';
 
 @Controller({
   version: '1',
@@ -22,5 +23,12 @@ export class CategoryController {
   async get () {
     const categories = await this.categoryService.getAll();
     return { categories };
+  }
+
+  @Delete('/:categoryId')
+  async delete (
+    @Param('categoryId', CategoryByIdPipe) categoryId: string,
+  ) {
+    return this.categoryService.delete(categoryId);
   }
 }
