@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { CategoryRepo } from "./repos/category.repo";
+import { CategoryRepo } from './repos/category.repo';
 
 @Module({
   providers: [PrismaService, CategoryRepo],
