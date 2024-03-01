@@ -13,4 +13,8 @@ export class CategoryRepo {
       data,
     });
   }
+
+  async findMany (args: Prisma.CategoryFindManyArgs) {
+    return this.prisma.category.findMany(args);
+  }
 }

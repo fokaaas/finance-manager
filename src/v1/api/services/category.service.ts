@@ -11,4 +11,8 @@ export class CategoryService {
   async create (data: CategoryDto) {
     return this.categoryRepo.create(data);
   }
+
+  async getAll () {
+    return this.categoryRepo.findMany({});
+  }
 }
