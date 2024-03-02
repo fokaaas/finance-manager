@@ -1,31 +1,40 @@
-import { IsEnum, IsNotEmpty } from 'class-validator';
-import { PaymentType } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaymentType } from '@prisma/client';
 
-export class CreatePaymentDto {
+export class PaymentResponse {
+  @ApiProperty({
+    description: 'Id of the payment',
+  })
+    id: string;
+
   @ApiProperty({
     description: 'Type of the payment',
     enum: PaymentType,
   })
-  @IsEnum(PaymentType, { message: 'Type must be an enum' })
-  @IsNotEmpty({ message: 'Type cannot be empty' })
     type: PaymentType;
 
   @ApiProperty({
     description: 'Amount of the payment',
   })
-  @IsNotEmpty({ message: 'Amount cannot be empty' })
     amount: number;
 
   @ApiProperty({
     description: 'Description of the payment',
   })
-  @IsNotEmpty({ message: 'Description cannot be empty' })
     description: string;
+
+  @ApiProperty({
+    description: 'Date of the payment',
+  })
+    createdAt: Date;
+
+  @ApiProperty({
+    description: 'Date og update of the payment',
+  })
+    updatedAt: Date;
 
   @ApiProperty({
     description: 'Category id of the payment',
   })
-  @IsNotEmpty({ message: 'Category id cannot be empty' })
     categoryId: string;
 }
