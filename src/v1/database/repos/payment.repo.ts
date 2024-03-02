@@ -18,4 +18,17 @@ export class PaymentRepo {
   async findMany (args: Prisma.PaymentFindManyArgs) {
     return this.prisma.payment.findMany(args);
   }
+
+  async findById (id: string) {
+    return this.prisma.payment.findFirst({
+      where: { id },
+    });
+  }
+
+  async updateById (id: string, data: Prisma.PaymentUncheckedUpdateInput) {
+    return this.prisma.payment.update({
+      where: { id },
+      data,
+    });
+  };
 }

@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { PaymentService } from '../services/payment.service';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
+import { UpdatePaymentDto } from '../dto/update-payment.dto';
+import { PaymentByIdPipe } from '../../pipes/payment-by-id.pipe';
 
 @Controller({
   version: '1',
@@ -24,5 +26,13 @@ export class PaymentController {
     @Query() query: QueryPaymentDto,
   ) {
     return this.paymentService.getPayments(query);
+  }
+
+  @Patch('/:paymentId')
+  async update (
+    @Body() body: UpdatePaymentDto,
+    @Param('paymentId', PaymentByIdPipe) paymentId: string,
+  ) {
+    return this.paymentService.update(paymentId, body);
   }
 }
