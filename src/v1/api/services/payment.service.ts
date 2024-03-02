@@ -1,12 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PaymentRepo } from '../../database/repos/payment.repo';
 import { CreatePaymentDto } from '../dto/create-payment.dto';
-import { PaymentType, Payment } from '@prisma/client';
+import { PaymentType, Payment, Category } from '@prisma/client';
 import { QueryPaymentDto } from '../dto/query-payment.dto';
 import { InsufficientBalanceException } from '../../exceptions/insufficient-balance.exception';
 import { CategoryRepo } from '../../database/repos/category.repo';
 import { InvalidEntityIdException } from '../../exceptions/invalid-entity-id.exception';
 import { UpdatePaymentDto } from '../dto/update-payment.dto';
+import { join } from 'path';
+import * as fs from 'fs';
+
+enum OperationType {
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+}
 
 @Injectable()
 export class PaymentService {
@@ -21,7 +29,9 @@ export class PaymentService {
     if (data.type === PaymentType.EXPENSE && data.amount > balance) {
       throw new InsufficientBalanceException();
     }
-    return this.paymentRepo.create(data);
+    const createdPayment = await this.paymentRepo.create(data);
+    await this.writeLogs(OperationType.CREATE, createdPayment);
+    return createdPayment;
   }
 
   private async getCurrentBalance (): Promise<number> {
@@ -80,7 +90,9 @@ export class PaymentService {
     if (data.categoryId) await this.checkCategory(data.categoryId);
     const payment = await this.paymentRepo.findById(id);
     if (data.amount) await this.checkBalance(data, payment);
-    return this.paymentRepo.updateById(id, data);
+    const updatedPayment = await this.paymentRepo.updateById(id, data);
+    await this.writeLogs(OperationType.UPDATE, updatedPayment);
+    return updatedPayment;
   }
 
   async delete (id: string) {
@@ -91,6 +103,14 @@ export class PaymentService {
         throw new InsufficientBalanceException();
       }
     }
-    return this.paymentRepo.deleteById(id);
+    const deletedPayment = await this.paymentRepo.deleteById(id);
+    await this.writeLogs(OperationType.DELETE, deletedPayment);
+    return deletedPayment;
+  }
+
+  private async writeLogs (type: OperationType, data: Payment & { category: Category }) {
+    const filePath = join(__dirname, 'private', 'logs');
+    const entry = `${type}\t${data.type}\t${data.createdAt.toISOString()}\t${data.category.name}\n`;
+    await fs.promises.appendFile(filePath, entry, 'utf-8');
   }
 }

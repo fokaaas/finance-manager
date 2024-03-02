@@ -6,12 +6,16 @@ import { PrismaService } from '../prisma.service';
 export class PaymentRepo {
   constructor (
     private prisma: PrismaService,
-  ) {
-  }
+  ) {}
+
+  private include = {
+    category: true,
+  };
 
   async create (data: Prisma.PaymentUncheckedCreateInput) {
     return this.prisma.payment.create({
       data,
+      include: this.include,
     });
   }
 
@@ -29,12 +33,14 @@ export class PaymentRepo {
     return this.prisma.payment.update({
       where: { id },
       data,
+      include: this.include,
     });
   };
 
   async deleteById (id: string) {
     return this.prisma.payment.delete({
       where: { id },
+      include: this.include,
     });
   }
 }
