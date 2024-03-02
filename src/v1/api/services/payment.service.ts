@@ -82,4 +82,15 @@ export class PaymentService {
     if (data.amount) await this.checkBalance(data, payment);
     return this.paymentRepo.updateById(id, data);
   }
+
+  async delete (id: string) {
+    const payment = await this.paymentRepo.findById(id);
+    if (payment.type === PaymentType.INCOME) {
+      const balance = await this.getCurrentBalance();
+      if (balance - payment.amount < 0) {
+        throw new InsufficientBalanceException();
+      }
+    }
+    return this.paymentRepo.deleteById(id);
+  }
 }

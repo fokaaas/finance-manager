@@ -31,4 +31,10 @@ export class PaymentRepo {
       data,
     });
   };
+
+  async deleteById (id: string) {
+    return this.prisma.payment.delete({
+      where: { id },
+    });
+  }
 }
