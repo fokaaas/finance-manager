@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class PaymentRepo {
   constructor (
-    private prisma: PrismaClient,
+    private prisma: PrismaService,
   ) {
   }
 
@@ -12,5 +13,9 @@ export class PaymentRepo {
     return this.prisma.payment.create({
       data,
     });
+  }
+
+  async findMany (args: Prisma.PaymentFindManyArgs) {
+    return this.prisma.payment.findMany(args);
   }
 }
